@@ -1,5 +1,6 @@
 import "./App.css";
-import { InputLabel, Loginbutton, StyledForm } from "./Components/Login";
+import { useNavigate } from "react-router-dom";
+import { InputLabel, Loginbutton, StyledForm } from "./Components/StyledComponents/Login";
 import React, { useState } from "react";
 import { z } from "zod";
 
@@ -13,6 +14,8 @@ type CreateUserFormData = z.infer<typeof createUserFormSchema>;
 const App = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [loginError, setLoginError] = useState("");
+  const navigate = useNavigate();
   const [formErrors, setFormErrors] = useState<Partial<CreateUserFormData>>({});
 
   const validateForm = (data: CreateUserFormData) => {
@@ -34,10 +37,27 @@ const App = () => {
     const formData: CreateUserFormData = { username, password };
 
     if (validateForm(formData)) {
-      // Form is valid, proceed with submission
-      alert(username + " " + password);
 
-      // The fetch logic can be added here
+      const response = await fetch('http://localhost:5079/api/Login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username,
+          password,
+        }),
+      });
+      
+      if (response.ok) {
+        console.log('Login bem-sucedido');
+        navigate('/SucessoPage');
+        
+      } else {
+        console.error('Falha no login');
+        setLoginError('Falha no login');
+
+      }
     }
   };
 
@@ -45,6 +65,7 @@ const App = () => {
     <StyledForm onSubmit={handleSubmit}>
       <div>
         <h2 style={{ display: "flex", alignContent: "center", justifyContent: "center", marginTop: 0 }}>Login</h2>
+        {loginError && <span>{loginError}</span>}
         <InputLabel>
           <label htmlFor="username">Usuário</label>
           <input
@@ -76,14 +97,3 @@ const App = () => {
 };
 
 export default App;
-
-// const response = await fetch('/api/login', {
-//   method: 'POST',
-//   headers: {
-//     'Content-Type': 'application/json',
-//   },
-//   body: JSON.stringify({
-//     username,
-//     password,
-//   }),
-// });
