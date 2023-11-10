@@ -1,14 +1,13 @@
-// Em src/Rotas.tsx
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import App from '../App';
 import SucessoPage from '../Pages/SucessoPage';
+import LoginPage from '../Pages/LoginPage';
 
 const Rotas: React.FC = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" Component={App} />
+        <Route path="/" Component={LoginPage} />
         <Route path="/SucessoPage" Component={SucessoPage} />
       </Routes>
     </Router>

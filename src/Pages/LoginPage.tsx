@@ -1,8 +1,9 @@
-import "./App.css";
+import '../App.css';
 import { useNavigate } from "react-router-dom";
-import { InputLabel, Loginbutton, StyledForm } from "./Components/StyledComponents/Login";
-import React, { useState } from "react";
+import { InputLabel, Loginbutton, StyledForm } from "../Components/StyledComponents/Login";
+import React, { useEffect, useState } from "react";
 import { z } from "zod";
+import Cookies from 'js-cookie';
 
 const createUserFormSchema = z.object({
   username: z.string().min(1, "Insira o nome de usuário"),
@@ -11,12 +12,21 @@ const createUserFormSchema = z.object({
 
 type CreateUserFormData = z.infer<typeof createUserFormSchema>;
 
-const App = () => {
+const LoginPage = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
   const navigate = useNavigate();
   const [formErrors, setFormErrors] = useState<Partial<CreateUserFormData>>({});
+
+  useEffect(() => {
+    const savedUsername = Cookies.get('username');
+    const savedPassword = Cookies.get('password');
+    if (savedUsername && savedPassword) {
+      setUsername(savedUsername);
+      setPassword(savedPassword);
+    }
+  }, [])
 
   const validateForm = (data: CreateUserFormData) => {
     try {
@@ -52,11 +62,14 @@ const App = () => {
       if (response.ok) {
         console.log('Login bem-sucedido');
         navigate('/SucessoPage');
+        Cookies.set('username', username);
+        Cookies.set('password', password);
+        Cookies.set('login', 'true');
+        handleSubmit(e);
         
       } else {
         console.error('Falha no login');
         setLoginError('Falha no login');
-
       }
     }
   };
@@ -96,4 +109,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default LoginPage;
