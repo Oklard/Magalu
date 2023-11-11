@@ -65,7 +65,6 @@ const LoginPage = () => {
         Cookies.set('username', username);
         Cookies.set('password', password);
         Cookies.set('login', 'true');
-        handleSubmit(e);
         
       } else {
         console.error('Falha no login');
